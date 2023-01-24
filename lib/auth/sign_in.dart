@@ -1,9 +1,13 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:food_delivery/providers/user_provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 
-import '../screens/homescreen.dart';
+import '../screens/Home/homescreen.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -13,6 +17,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  UserProvider? userProvider;
   Future<User?> _googleSignUp() async {
     try {
       final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -30,7 +35,13 @@ class _SignInState extends State<SignIn> {
       );
 
       final User? user = (await _auth.signInWithCredential(credential)).user;
-      // print("signed in " + user.displayName);
+
+      // await userProvider?.addUserData(
+      //   currentUser: user!,
+      //   userEmail: user.email,
+      //   userImage: user.photoURL,
+      //   userName: user.displayName,
+      // );
 
       return user;
     } catch (e) {
@@ -40,6 +51,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -87,13 +99,17 @@ class _SignInState extends State<SignIn> {
                           Buttons.Google,
                           text: "Sign in with Google",
                           onPressed: () {
-                            _googleSignUp().then(
-                              (value) => Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              ),
-                            );
+                            _googleSignUp().then((value) {
+                              log("signing into the account asked by the user " +
+                                  '${value?.email}');
+                              // Navigator.of(context).pushReplacement(
+                              //   MaterialPageRoute(
+                              //     builder: (context) => HomeScreen(),
+                              //   ),
+                              // );
+                            }).onError((error, stackTrace) {
+                              log(error.toString());
+                            });
                           },
                         ),
                       ],
