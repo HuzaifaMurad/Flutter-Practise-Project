@@ -2,11 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:food_delivery/providers/Product_provider.dart';
+import 'package:food_delivery/providers/user_provider.dart';
 import 'package:food_delivery/screens/Home/widgets/customDrawer.dart';
 import 'package:food_delivery/screens/Home/widgets/homeitems.dart';
 import 'package:food_delivery/screens/productOver/product_overview.dart';
 import 'package:food_delivery/screens/searchPage/Searchpage.dart';
 import 'package:provider/provider.dart';
+
+import '../reviewCart/review_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,12 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of(context);
+    userProvider.getUserData();
     productProvider = Provider.of(context);
     final height = MediaQuery.of(context).size.height;
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      drawer: CustomDrawer(),
+      drawer: CustomDrawer(userProvider: userProvider),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
@@ -64,10 +69,17 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CircleAvatar(
               radius: 15,
               backgroundColor: Color(0xffd4d181),
-              child: Icon(
-                Icons.shop,
-                size: 17,
-                color: Colors.black,
+              child: IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ReviewCartPage(),
+                  ));
+                },
+                icon: Icon(
+                  Icons.shop,
+                  size: 17,
+                  color: Colors.black,
+                ),
               ),
             ),
           ),
@@ -183,6 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: productProvider?.herbsProductList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return HomeItems(
+                    productUnit: productProvider?.herbsProductList[index],
+                    productId:
+                        productProvider?.herbsProductList[index].productId,
                     imagepath:
                         productProvider?.herbsProductList[index].productImage,
                     imagetitile:
@@ -199,6 +214,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ?.herbsProductList[index].productImage,
                             productPirce: productProvider
                                 ?.herbsProductList[index].productPrice,
+                            productId: productProvider
+                                ?.herbsProductList[index].productId,
                           ),
                         ),
                       );
@@ -216,6 +233,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: productProvider?.getfreshProductList.length,
                 itemBuilder: (BuildContext context, int index) {
                   return HomeItems(
+                    productUnit: productProvider?.getfreshProductList[index],
+                    productId:
+                        productProvider?.getfreshProductList[index].productId,
                     imagepath: productProvider
                         ?.getfreshProductList[index].productImage,
                     imagetitile:
@@ -226,6 +246,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => ProductOverScreen(
+                            productId: productProvider
+                                ?.getfreshProductList[index].productId,
                             productImage: productProvider
                                 ?.getfreshProductList[index].productImage,
                             productName: productProvider

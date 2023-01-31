@@ -7,10 +7,11 @@ class ProductProvider with ChangeNotifier {
   List<ProductModel> search = [];
   productModels(QueryDocumentSnapshot element) {
     productModel = ProductModel(
-      productImage: element.get('productImage'),
-      productName: element.get('productName'),
-      productPrice: element.get('productPrice'),
-    );
+        productImage: element.get('productImage'),
+        productName: element.get('productName'),
+        productPrice: element.get('productPrice'),
+        productId: element.get('productId'),
+        productUnit: element.get('productUnit'));
     search.add(productModel!);
   }
 

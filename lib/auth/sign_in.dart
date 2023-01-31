@@ -34,18 +34,18 @@ class _SignInState extends State<SignIn> {
         idToken: googleAuth.idToken,
       );
 
-      final User? user = (await _auth.signInWithCredential(credential)).user;
+      final User? users = (await _auth.signInWithCredential(credential)).user;
 
-      // await userProvider?.addUserData(
-      //   currentUser: user!,
-      //   userEmail: user.email,
-      //   userImage: user.photoURL,
-      //   userName: user.displayName,
-      // );
+      await userProvider?.addUserData(
+        currentUser: users!,
+        userEmail: users.email,
+        userImage: users.photoURL,
+        userName: users.displayName,
+      );
 
-      return user;
+      return users;
     } catch (e) {
-      print(e);
+      print('this is error :$e');
     }
   }
 
@@ -93,7 +93,9 @@ class _SignInState extends State<SignIn> {
                         SignInButton(
                           Buttons.Apple,
                           text: "Sign in with Apple",
-                          onPressed: () {},
+                          onPressed: () async {
+                            await _googleSignUp();
+                          },
                         ),
                         SignInButton(
                           Buttons.Google,
@@ -102,11 +104,11 @@ class _SignInState extends State<SignIn> {
                             _googleSignUp().then((value) {
                               log("signing into the account asked by the user " +
                                   '${value?.email}');
-                              // Navigator.of(context).pushReplacement(
-                              //   MaterialPageRoute(
-                              //     builder: (context) => HomeScreen(),
-                              //   ),
-                              // );
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => HomeScreen(),
+                                ),
+                              );
                             }).onError((error, stackTrace) {
                               log(error.toString());
                             });
